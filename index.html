@@ -4,7 +4,11 @@
     <meta charset="UTF-8">
     <title>Technical - test</title>
 </head>
-<style></style>
+<style>
+    /* @todo: Add CSS Reset for relevant elements */
+    /* @todo: Add styling for sorting arrows for table header elements (to show sort direction) */
+    /* @todo: Add responsive styles for table overflow/scroll for small screens */
+</style>
 <body>
 <header>
     <h1>Top 25 ranked cryptocurrencies</h1>
@@ -12,6 +16,14 @@
         asc/desc.</p>
 </header>
 <main>
+    <fieldset>
+        <label for="currency">Select currency:</label> <select id="currency" data-js-currency-select>
+        <option value="USD">USD</option>
+        <option value="GBP">GBP</option>
+        <option value="EUR">EUR</option>
+        <option value="AED">AED</option>
+    </select>
+    </fieldset>
     <div class="table-wrapper">
         <table data-js-cypto-table>
             <thead>
@@ -62,6 +74,25 @@
      * Collection of utility functions
      */
     const Utils = {
+        /**
+         * Sort data based on key and order
+         * @param data
+         * @param key
+         * @param order
+         * @returns {*}
+         */
+        sortData: (data, key, order) => {
+            // For sorting both numbers and strings using browser Intl API
+            const collator = new Intl.Collator(undefined, {numeric: true, sensitivity: 'base'});
+            return data.sort((a, b) => {
+                if (order === 'asc') {
+                    return collator.compare(a[key], b[key]);
+                } else {
+                    return collator.compare(b[key], a[key]);
+                }
+            });
+        },
+
         /**
          * Format price with currency
          * @param price
@@ -143,7 +174,7 @@
                 let tableRowElement = document.createElement('tr');
                 tableHeadersElement.forEach(header => {
                     let tableDataElement = document.createElement('td');
-                    // XSS/Crossite Risk,
+                    // !IMPORTANT! XSS/Cross-site Risk:
                     // Very unsafe, but for the sake of this test, I'm assuming the data is safe
                     tableDataElement.innerHTML = this.formatColumnDataFor(header, row[header]);
                     // Add data attribute to td value
@@ -177,7 +208,71 @@
          * @private
          */
         bindEvents() {
-            // @todo: Add bind events here for sorting and currency change elements
+            if (this.currencySelectElement) {
+                this.currencySelectElement.addEventListener('change', this.handleCurrencyChange.bind(this));
+            } else {
+                console.error('Currency select element not found');
+            }
+
+            if (this.tableElement) {
+                // Add click event to table header columns for sorting
+                this.tableElement.querySelectorAll('th').forEach(header => {
+                    header.addEventListener('click', this.handleSort.bind(this));
+                });
+            } else {
+                console.error('Table element not found');
+            }
+        }
+
+        /**
+         * Handle currency change event
+         * @private
+         * @param event {Event}
+         */
+        handleCurrencyChange(event) {
+            this.currency = event.target.value;
+            this.updatePriceColumn();
+        }
+
+        /**
+         * Handle sort event
+         * @private
+         * @param event {Event}
+         */
+        handleSort(event) {
+            let key = event.target.dataset.key;
+            let order = 'asc';
+            if (event.target.classList.contains('asc')) {
+                order = 'desc';
+            }
+            let sortedData = Utils.sortData(this.data.data, key, order);
+            this.createTable(sortedData);
+            // Remove all asc and desc classes from th
+            this.tableElement.querySelectorAll('th').forEach(header => {
+                header.classList.remove('asc', 'desc');
+            });
+            // Add asc or desc class to clicked th
+            event.target.classList.add(order);
+        }
+
+        /**
+         * Update price column with exchange rate
+         */
+        updatePriceColumn() {
+            // Get value from price column and update with exchangeRatesAPIForUSD
+            this.exchangeRatesAPIForUSD.fetchData().then(data => {
+                if (data?.rates && data?.rates[this.currency]) {
+                    let exchangeRate = data.rates[this.currency];
+                    this.tableElement.querySelectorAll('td[data-key=priceUsd]').forEach(td => {
+                        if (td.dataset.value) {
+                            let price = parseFloat(td.dataset.value);
+                            if (!isNaN(price)) {
+                                td.textContent = Utils.formatPrice(price * exchangeRate, this.currency);
+                            }
+                        }
+                    });
+                }
+            });
         }
 
 
@@ -188,7 +283,7 @@
         showError() {
             let errorMessageElement = document.querySelector('[data-js-error-message]');
             if (errorMessageElement) {
-                errorMessage.textContent = this.data.error || 'Sorry! No data available. Please refresh this page to try again.';
+                errorMessageElement.textContent = this.data.error || 'Sorry! No data available. Please refresh this page to try again.';
             } else {
                 console.error('Error:', this.data.error || 'Sorry! No data available. Please refresh this page to try again.');
             }
