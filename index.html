@@ -58,9 +58,33 @@
         }
     }
 
-    // @todo: Write a collection of utility functions to help with sorting, currency conversions, etc.,
+    /**
+     * Collection of utility functions
+     */
+    const Utils = {
+        /**
+         * Format price with currency
+         * @param price
+         * @param currency
+         * @returns {string}
+         */
+        formatPrice: (price, currency) => {
+            const priceFloat = parseFloat(price);
+            if (!isNaN(priceFloat) && currency) {
+                return `${priceFloat.toLocaleString('en-US', {
+                    style: 'currency',
+                    currency: currency,
+                    maximumFractionDigits: 50
+                })}`;
+            } else {
+                return 'N/A';
+            }
+        }
+    };
 
-    // Create Class to create table and display data
+    /**
+     * Create table with data
+     */
     class CreateTable {
         /**
          * @param data {Object} - The data to display in the table
@@ -127,10 +151,13 @@
          * @param value {string|number}
          */
         formatColumnDataFor(key, value) {
-            // @todo: Add utils to format price to relevant currency `priceUsd` column
+            if (key === 'priceUsd') {
+                return Utils.formatPrice(value, this.currency);
+            }
 
-            // @todo add code to format url to anchor links `explorer` column
-
+            if (key === 'explorer') {
+                return `<a href="${value}" target="_blank">Website →</a>`;
+            }
             return value;
         }
 
