@@ -28,6 +28,7 @@
             </tbody>
         </table>
     </div>
+    <p data-js-error-message></p>
 </main>
 <script>
     /**
@@ -89,7 +90,20 @@
          * @private
          */
         createTable() {
-            // @todo: Implement this method to create the table with data
+            if (this.data.error || !this.data.data) {
+                this.showError();
+                return;
+            }
+
+            let tableBodyElement = this.tableElement.querySelector('tbody');
+            tableBodyElement.innerHTML = '';
+
+            // loop through table headers and get data-key
+            let tableHeadersElement = Array.from(this.tableElement.querySelectorAll('th')).map(header => header.dataset.key);
+
+            //@todo: Loop through headers and create table rows with data based on `data-key` from headers
+
+            // @todo add code to add rows to tbody
         }
 
         /**
@@ -98,6 +112,20 @@
          */
         bindEvents() {
             // @todo: Add bind events here for sorting and currency change elements
+        }
+
+
+        /**
+         * Show error message if data is not available
+         * @private
+         */
+        showError() {
+            let errorMessageElement = document.querySelector('[data-js-error-message]');
+            if (errorMessageElement) {
+                errorMessage.textContent = this.data.error || 'Sorry! No data available. Please refresh this page to try again.';
+            } else {
+                console.error('Error:', this.data.error || 'Sorry! No data available. Please refresh this page to try again.');
+            }
         }
     }
 
