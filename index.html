@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Technical - test</title>
+</head>
+<style></style>
+<body>
+<header>
+    <h1>Top 25 ranked cryptocurrencies</h1>
+    <p>Please use the currency dropdown below to switch currencies.<br>You can also click on the column headings to sort asc/desc.</p>
+</header>
+<main>
+    <div class="table-wrapper">
+        <table data-js-cypto-table>
+            <thead>
+            <tr>
+                <th data-key="id">ID</th>
+                <th data-key="rank">Rank</th>
+                <th data-key="priceUsd">Price</th>
+                <th data-key="symbol">Symbol</th>
+                <th data-key="explorer">Link</th>
+            </tr>
+            </thead>
+            <tbody>
+            <!-- Data Rows corresponding to the heading attribute `data-key` will be displayed here using JS -->
+            </tbody>
+        </table>
+    </div>
+</main>
+<script>
+    // @todo: Write a wrapper for class for FetchAPI for handling errors gracefully if it happens
+    // @todo: Write a collection of utility functions to help with sorting, currency conversions, etc.,
+    // @todo: Write a class to handle the rendering of the data in rows the table body for table with `data-js-cypto-table` attribute
+
+    // @todo: Add domready event to initialize the classes and required elements
+</script>
+</body>
+</html>
