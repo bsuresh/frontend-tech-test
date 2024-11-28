@@ -8,7 +8,8 @@
 <body>
 <header>
     <h1>Top 25 ranked cryptocurrencies</h1>
-    <p>Please use the currency dropdown below to switch currencies.<br>You can also click on the column headings to sort asc/desc.</p>
+    <p>Please use the currency dropdown below to switch currencies.<br>You can also click on the column headings to sort
+        asc/desc.</p>
 </header>
 <main>
     <div class="table-wrapper">
@@ -29,11 +30,44 @@
     </div>
 </main>
 <script>
-    // @todo: Write a wrapper for class for FetchAPI for handling errors gracefully if it happens
+    /**
+     * A wrapper for class for FetchAPI for handling errors gracefully if it happens
+     */
+    class API {
+        /**
+         * @param url {string} - The URL to fetch data from
+         */
+        constructor(url) {
+            this.url = url;
+        }
+
+        /**
+         * Fetch data from the URL
+         * @public
+         * @returns {Promise<*>}
+         */
+        async fetchData() {
+            try {
+                const response = await fetch(this.url);
+                return await response.json();
+            } catch (error) {
+                console.error('Error:', error);
+                return error;
+            }
+        }
+    }
+
     // @todo: Write a collection of utility functions to help with sorting, currency conversions, etc.,
     // @todo: Write a class to handle the rendering of the data in rows the table body for table with `data-js-cypto-table` attribute
 
-    // @todo: Add domready event to initialize the classes and required elements
+    // Wait for DOM ready or already loaded
+    document.addEventListener('DOMContentLoaded', () => {
+        // Fetch data from API and create table
+        const coinCapAPI = new API('https://api.coincap.io/v2/assets');
+        coinCapAPI.fetchData().then(data => {
+            // @todo: Create new table instance with the data
+        });
+    });
 </script>
 </body>
 </html>
