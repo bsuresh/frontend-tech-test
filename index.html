@@ -79,6 +79,19 @@
             } else {
                 return 'N/A';
             }
+        },
+
+        /**
+         * Sort data based on key and order, since data is already sorted by rank, this function logic is simple to get first 25 elements
+         * @param data {Object} - The data to sort
+         * @returns {*}
+         */
+        getTop25: (data) => {
+            if (!data || !data.data) {
+                return [];
+            }
+            data.data = data.data.slice(0, 25);
+            return data;
         }
     };
 
@@ -91,7 +104,7 @@
          */
         constructor(data) {
             // Set local members
-            this.data = data;
+            this.data = Utils.getTop25(data);
             this.tableElement = document.querySelector('[data-js-cypto-table]');
             this.currencySelectElement = document.querySelector('[data-js-currency-select]');
             this.currency = this.currencySelectElement?.value || 'USD';
@@ -140,8 +153,6 @@
                 });
                 tableBodyElement.appendChild(tableRowElement);
             });
-
-            // @todo add code to add rows to tbody
         }
 
         /**
