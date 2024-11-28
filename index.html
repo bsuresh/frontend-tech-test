@@ -58,14 +58,55 @@
     }
 
     // @todo: Write a collection of utility functions to help with sorting, currency conversions, etc.,
-    // @todo: Write a class to handle the rendering of the data in rows the table body for table with `data-js-cypto-table` attribute
+
+    // Create Class to create table and display data
+    class CreateTable {
+        /**
+         * @param data {Object} - The data to display in the table
+         */
+        constructor(data) {
+            // Set local members
+            this.data = data;
+            this.tableElement = document.querySelector('[data-js-cypto-table]');
+            this.currencySelectElement = document.querySelector('[data-js-currency-select]');
+            this.currency = this.currencySelectElement?.value || 'USD';
+            this.exchangeRatesAPIForUSD = new API('https://open.er-api.com/v6/latest/USD');
+
+            this.init();
+        }
+
+        /**
+         * Create table with data
+         * @private
+         */
+        init() {
+            this.createTable();
+            this.bindEvents();
+        }
+
+        /**
+         * Create table with data
+         * @private
+         */
+        createTable() {
+            // @todo: Implement this method to create the table with data
+        }
+
+        /**
+         * Bind events
+         * @private
+         */
+        bindEvents() {
+            // @todo: Add bind events here for sorting and currency change elements
+        }
+    }
 
     // Wait for DOM ready or already loaded
     document.addEventListener('DOMContentLoaded', () => {
         // Fetch data from API and create table
         const coinCapAPI = new API('https://api.coincap.io/v2/assets');
         coinCapAPI.fetchData().then(data => {
-            // @todo: Create new table instance with the data
+            new CreateTable(data);
         });
     });
 </script>
