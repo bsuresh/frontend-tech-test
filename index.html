@@ -101,9 +101,37 @@
             // loop through table headers and get data-key
             let tableHeadersElement = Array.from(this.tableElement.querySelectorAll('th')).map(header => header.dataset.key);
 
-            //@todo: Loop through headers and create table rows with data based on `data-key` from headers
+            // loop through data and create table rows
+            this.data.data.forEach(row => {
+                let tableRowElement = document.createElement('tr');
+                tableHeadersElement.forEach(header => {
+                    let tableDataElement = document.createElement('td');
+                    // XSS/Crossite Risk,
+                    // Very unsafe, but for the sake of this test, I'm assuming the data is safe
+                    tableDataElement.innerHTML = this.formatColumnDataFor(header, row[header]);
+                    // Add data attribute to td value
+                    tableDataElement.dataset.value = row[header];
+                    tableDataElement.dataset.key = header;
+                    tableRowElement.appendChild(tableDataElement);
+                });
+                tableBodyElement.appendChild(tableRowElement);
+            });
 
             // @todo add code to add rows to tbody
+        }
+
+        /**
+         * Format column data
+         * @private
+         * @param key {string}
+         * @param value {string|number}
+         */
+        formatColumnDataFor(key, value) {
+            // @todo: Add utils to format price to relevant currency `priceUsd` column
+
+            // @todo add code to format url to anchor links `explorer` column
+
+            return value;
         }
 
         /**
